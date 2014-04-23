@@ -6,6 +6,9 @@ from tekton.gae.middleware import Middleware
 
 def execute(next_process, handler, dependencies, **kwargs):
     def write_tmpl(template_name, values=None):
+        def aba_deve_ficar_selecionada(path_da_aba):
+            return handler
+
         values = values or {}
         return handler.response.write(tmpl.render(template_name, values))
 
@@ -17,7 +20,11 @@ def execute(next_process, handler, dependencies, **kwargs):
 class TemplateMiddleware(Middleware):
     def set_up(self):
         def write_tmpl(template_name, values=None):
+            def aba_deve_ficar_selecionada(path_da_aba):
+                return self.handler.request.path.startswith(path_da_aba)
+
             values = values or {}
+            values['_aba_deve_ficar_selecionada'] = aba_deve_ficar_selecionada
             return self.handler.response.write(tmpl.render(template_name, values))
 
         self.dependencies["_write_tmpl"] = write_tmpl
