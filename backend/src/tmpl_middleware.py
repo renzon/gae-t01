@@ -25,6 +25,9 @@ class TemplateMiddleware(Middleware):
 
             values = values or {}
             values['_aba_deve_ficar_selecionada'] = aba_deve_ficar_selecionada
+            values['_login_url'] = self.dependencies['_login_url']
+            values['_logout_url'] = self.dependencies['_logout_url']
+            values['_usuario_logado'] = self.dependencies['_usuario_logado']
             return self.handler.response.write(tmpl.render(template_name, values))
 
         self.dependencies["_write_tmpl"] = write_tmpl
