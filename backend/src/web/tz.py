@@ -3,7 +3,7 @@ from __future__ import absolute_import, unicode_literals
 from datetime import datetime
 from pytz import timezone, utc
 
-sp_timezone = timezone('America/New_York')
+sp_timezone = timezone('America/Sao_Paulo')
 
 
 def index(_json):
