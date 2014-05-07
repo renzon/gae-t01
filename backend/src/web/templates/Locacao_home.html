@@ -1,0 +1,49 @@
+{% extends 'templates/base.html' %}
+{% block conteudo %}
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>
+                        Status
+                    </th>
+                    <th>
+                        Filme
+                    </th>
+                    <th>
+                        Preço
+                    </th>
+                    <th>
+                        Data da Locação
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for loc in locacoes %}
+                    <tr>
+                        <td>
+                            {{ loc.status }}
+                        </td>
+                        <td>
+                            {{ loc.nome }}
+                        </td>
+                        <td>
+                            {{ loc.preco }}
+                        </td>
+                        <td>
+                            {{ loc.data }}
+                        </td>
+                        <td>
+                            {% if loc.status=='ALUGADO' %}
+                                <a href="{{ loc.devolver_path }}" class="btn btn-success">Devolver</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
