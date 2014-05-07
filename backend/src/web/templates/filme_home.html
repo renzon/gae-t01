@@ -1,16 +1,60 @@
 {% extends 'templates/base.html' %}
 {% block conteudo %}
-<div class="jumbotron">
-    <h1>
-        Area de filmes!
-    </h1>
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            <h1>Vídeos Disponíveis</h1>
 
-    <p>
-        Blah Blah
-    </p>
+            <form action="{{ salvar_path }}" method="post">
+                <fieldset>
+                    Nome: <input type="text" name="nome"/><br/>
+                    Preço: <input type="text" name="preco"/><br/>
+                    Status: <input name="status" type="radio" value="DISPONIVEL"/> Disponível
+                    <input name="status" type="radio" value="ALUGADO"/> Alugado
+                </fieldset>
+                <button type="submit" class="btn btn-success">Salvar</button>
 
-    <p>
-        <a class="btn btn-primary btn-large" href="#">Learn more</a>
-    </p>
-</div>
+            </form>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>
+                        Status
+                    </th>
+                    <th>
+                        Filme
+                    </th>
+                    <th>
+                        Preço
+                    </th>
+
+                </tr>
+                </thead>
+                <tbody>
+                {% for filme in filmes %}
+                    <tr>
+                        <td>
+                            {{ 'Disponível' if filme.status=='DISPONIVEL' else 'Alugado' }}
+                        </td>
+                        <td>
+                            {{ filme.nome }}
+                        </td>
+                        <td>
+                            {{ filme.preco }}
+                        </td>
+                        <td><a href="{{ filme.editar_path }}" class="btn btn-primary"><i
+                                class="glyphicon glyphicon-pencil"></i></a></td>
+                        <td><a href="{{ filme.deletar_path }}" class="btn btn-danger"><i
+                                class="glyphicon glyphicon-trash"></i></a></td>
+                        <td>
+                            {% if filme.status=='DISPONIVEL' %}
+                                <a href="{{ filme.alugar_path }}" class="btn btn-success">Alugar</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+    </div>
 {% endblock %}

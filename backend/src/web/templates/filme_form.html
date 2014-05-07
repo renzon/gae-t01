@@ -1,0 +1,23 @@
+{% extends 'templates/base.html' %}
+{% block conteudo %}
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            <h1>Formulário de Filme</h1>
+
+            <form action="{{ salvar_path }}" method="post">
+                <fieldset>
+                    <input type="hidden" name="id" value="{{ filme.key.id() }}" />
+                    Nome: <input type="text" name="nome" value="{{ filme.nome }}"/><br/>
+                    Preço: <input type="text" name="preco" value="{{ filme.preco }}"/><br/>
+                    Status: <input name="status" type="radio" value="DISPONIVEL"
+                        {{ 'checked="checked"'|safe if filme.status=='DISPONIVEL' }}/> Disponível
+                    <input name="status" type="radio"
+                           value="ALUGADO" {{ 'checked="checked"'|safe if filme.status=='ALUGADO' }}/> Alugado
+                </fieldset>
+                <button type="submit" class="btn btn-success">Salvar</button>
+
+            </form>
+
+        </div>
+    </div>
+{% endblock %}

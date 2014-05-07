@@ -38,6 +38,14 @@ handlers:
   script: convention.app
   login: admin
 
+- url: /filme.*
+  script: convention.app
+  login: required
+
+- url: /locacao.*
+  script: convention.app
+  login: required
+
 - url: /.*
   script: convention.app
 
