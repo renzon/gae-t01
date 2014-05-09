@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import, unicode_literals
+import logging
 from google.appengine.ext import ndb
 from filmes.modelo import Filme, Locacao
 from tekton import router
@@ -21,7 +22,9 @@ def index(_write_tmpl):
 
 def alugar(_handler, _usuario_logado, filme_id):
     filme_key = ndb.Key(Filme, int(filme_id))
-    filme = filme_key.get()
+    filme_futuro = filme_key.get_async()
+    logging.info('Operação custosa')
+    filme = filme_futuro.get_result()
     locacao = Locacao(usuario_key=_usuario_logado.key,
                       filme_key=filme_key,
                       nome=filme.nome,
