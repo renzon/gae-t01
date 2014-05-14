@@ -1,19 +1,61 @@
 {% extends 'templates/base.html' %}
+{% block js %}
+    <script type="text/javascript" src="/static/js/angular.min.js"></script>
+    <script type="application/javascript">
+        var minhaApp = angular.module('minhaApp', [], function ($interpolateProvider) {
+            $interpolateProvider.startSymbol('{_');
+            $interpolateProvider.endSymbol('_}');
+        });
+
+        function FilmesController($scope, $http) {
+            $scope.nome = '';
+            $scope.preco = '';
+            $scope.status = 'DISPONIVEL';
+            $scope.listaDeFilmes = [];
+            $scope.ajaxFlag = true;
+            $scope.salvandoFilme = false;
+
+            var chamadaGet = $http.get('/rest/listar_filmes')
+            chamadaGet.success(function (listaDeFilmes) {
+                $scope.listaDeFilmes = listaDeFilmes;
+                $scope.ajaxFlag = false;
+            });
+
+            $scope.salvarFilme = function (nome, preco, status) {
+                var filme = {'nome': nome, 'preco': preco, 'status': status};
+                $scope.salvandoFilme = true;
+                $http.post('/rest/salvar', filme).success(function (filmeComId) {
+                    $scope.listaDeFilmes.unshift(filmeComId);
+                    $scope.nome = '';
+                    $scope.preco = '';
+                    $scope.status = 'DISPONIVEL';
+                    $scope.salvandoFilme = false;
+
+                }).error(function () {
+                    alert('Ocorreu um erro');
+                    $scope.salvandoFilme = false;
+                });
+
+
+            }
+
+        }
+    </script>
+{% endblock %}
 {% block conteudo %}
     <div class="row clearfix">
-        <div class="col-md-12 column">
-            <h1>Vídeos Disponíveis</h1>
+        <div class="col-md-12 column" ng-app="minhaApp" ng-controller="FilmesController">
+            <h1>Vídeos Disponíveis </h1>
 
-            <form action="{{ salvar_path }}" method="post">
-                <fieldset>
-                    Nome: <input type="text" name="nome"/><br/>
-                    Preço: <input type="text" name="preco"/><br/>
-                    Status: <input name="status" type="radio" value="DISPONIVEL"/> Disponível
-                    <input name="status" type="radio" value="ALUGADO"/> Alugado
-                </fieldset>
-                <button type="submit" class="btn btn-success">Salvar</button>
 
-            </form>
+            Nome: <input type="text" name="nome" ng-model="nome"/><br/>
+            Preço: <input type="text" name="preco" ng-model="preco"/><br/>
+            Status: <input name="status" type="radio" value="DISPONIVEL" ng-model="status"/> Disponível
+            <input name="status" type="radio" value="ALUGADO" ng-model="status"/> Alugado
+
+            <button class="btn btn-success" ng-click="salvarFilme(nome,preco,status)" ng-hide="salvandoFilme">Salvar
+            </button>
+            <img src="/static/img/ajax-loader.gif" ng-show="salvandoFilme"/>
             <table class="table table-striped">
                 <thead>
                 <tr>
@@ -30,31 +72,58 @@
                 </tr>
                 </thead>
                 <tbody>
-                {% for filme in filmes %}
-                    <tr>
-                        <td>
-                            {{ 'Disponível' if filme.status=='DISPONIVEL' else 'Alugado' }}
-                        </td>
-                        <td>
-                            {{ filme.nome }}
-                        </td>
-                        <td>
-                            {{ filme.preco }}
-                        </td>
-                        <td><a href="{{ filme.editar_path }}" class="btn btn-primary"><i
-                                class="glyphicon glyphicon-pencil"></i></a></td>
-                        <td><a href="{{ filme.deletar_path }}" class="btn btn-danger"><i
-                                class="glyphicon glyphicon-trash"></i></a></td>
-                        <td>
-                            {% if filme.status=='DISPONIVEL' %}
-                                <a href="{{ filme.alugar_path }}" class="btn btn-success">Alugar</a>
-                            {% endif %}
-                        </td>
-                    </tr>
-                {% endfor %}
+                <tr ng-repeat="filme in listaDeFilmes">
+                    <td>{_ filme.status _}</td>
+                    <td>{_ filme.nome _}</td>
+                    <td>{_ filme.preco _}</td>
+
+                </tr>
 
                 </tbody>
             </table>
+            <img src="/static/img/ajax-loader.gif" ng-show="ajaxFlag"/>
+            {#            <h2>Tabela Estática</h2>#}
+            {#            <table class="table table-striped">#}
+            {#                <thead>#}
+            {#                <tr>#}
+            {#                    <th>#}
+            {#                        Status#}
+            {#                    </th>#}
+            {#                    <th>#}
+            {#                        Filme#}
+            {#                    </th>#}
+            {#                    <th>#}
+            {#                        Preço#}
+            {#                    </th>#}
+            {##}
+            {#                </tr>#}
+            {#                </thead>#}
+            {#                <tbody>#}
+            {#                {% for filme in filmes %}#}
+            {#                    <tr>#}
+            {#                        <td>#}
+            {#                            {{ 'Disponível' if filme.status=='DISPONIVEL' else 'Alugado' }}#}
+            {#                        </td>#}
+            {#                        <td>#}
+            {#                            {{ filme.nome }}#}
+            {#                        </td>#}
+            {#                        <td>#}
+            {#                            {{ filme.preco }}#}
+            {#                        </td>#}
+            {#                        <td><a href="{{ filme.editar_path }}" class="btn btn-primary"><i#}
+            {#                                class="glyphicon glyphicon-pencil"></i></a></td>#}
+            {#                        <td><a href="{{ filme.deletar_path }}" class="btn btn-danger"><i#}
+            {#                                class="glyphicon glyphicon-trash"></i></a></td>#}
+            {#                        <td>#}
+            {#                            {% if filme.status=='DISPONIVEL' %}#}
+            {#                                <a href="{{ filme.alugar_path }}" class="btn btn-success">Alugar</a>#}
+            {#                            {% endif %}#}
+            {#                        </td>#}
+            {#                    </tr>#}
+            {#                {% endfor %}#}
+            {##}
+            {#                </tbody>#}
+            {#            </table>#}
         </div>
     </div>
 {% endblock %}
